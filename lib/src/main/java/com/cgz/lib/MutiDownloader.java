@@ -59,10 +59,32 @@ public class MutiDownloader {
     }
 
     private static class DownloadThread extends Thread{
+
+        private final int threaId;
+        private final int startPosition;
+        private final int endPosition;
+
+        public DownloadThread(int threaId, int startPosition, int endPosition) {
+            this.threaId = threaId;
+            this.startPosition = startPosition;
+            this.endPosition = endPosition;
+
+        }
+
         @Override
         public void run() {
-
-
+            try {
+                URL url = new URL(path);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                System.out.println("begin and end:" + threaId +
+                        "range od download:" + startPosition +
+                        "~~~" + endPosition);
+                conn.setRequestProperty("Range", "bytes" +
+                        startPosition + "-" + endPosition);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
