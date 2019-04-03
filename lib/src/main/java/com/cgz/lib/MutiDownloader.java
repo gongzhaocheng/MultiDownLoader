@@ -2,6 +2,7 @@ package com.cgz.lib;
 
 import com.sun.jndi.toolkit.url.UrlUtil;
 
+import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -20,11 +21,23 @@ public class MutiDownloader {
             if (code == 200) {
                 int length = conn.getContentLength();
                 System.out.println("file legth" + length);
+                new RandomAccessFile(getDownloadFileName(path),"rw");
             } else {
                 System.out.println("download error , code = "+ code);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 从网络路径获取文件名
+     *
+     * @param path
+     *      网络路径
+     * @return  文件名
+     */
+    private static String getDownloadFileName(String path) {
+        return path.substring(path.lastIndexOf("/") + 1);
     }
 }
