@@ -21,7 +21,11 @@ public class MutiDownloader {
             if (code == 200) {
                 int length = conn.getContentLength();
                 System.out.println("file legth" + length);
-                new RandomAccessFile(getDownloadFileName(path),"rw");
+                RandomAccessFile raf = new RandomAccessFile(getDownloadFileName(path), "rw");
+                // 创建一个空的文件并设置它的长度等于服务器上的文件的长度
+                raf.setLength(length);
+                raf.close();
+
             } else {
                 System.out.println("download error , code = "+ code);
             }
