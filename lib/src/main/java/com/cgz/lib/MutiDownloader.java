@@ -95,13 +95,18 @@ public class MutiDownloader {
 
                     int len = 0;
                     byte[] buffer = new byte[1024];
+                    int total = 0; // downloaded data of current thread in this times
                     while ((len = is.read(buffer)) != -1) {
-                        // do something
+                        raf.write(buffer, 0, len);
+                        total += len;
 
                     }
-
+                    is.close();
+                    raf.close();
+                    System.out.println("thread:" + threaId +
+                            "download complete.....");
                 } else {
-                    System.out.println("");
+                    System.out.println("request download failed");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
