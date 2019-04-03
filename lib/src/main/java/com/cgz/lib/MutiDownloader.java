@@ -2,12 +2,16 @@ package com.cgz.lib;
 
 import com.sun.jndi.toolkit.url.UrlUtil;
 
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.Buffer;
 import java.nio.file.Path;
+
+import sun.security.util.Length;
 
 public class MutiDownloader {
     public static String path = "http://192.168.102.115:8080/Day10/WebStorm.dmg";
@@ -82,6 +86,23 @@ public class MutiDownloader {
                         "~~~" + endPosition);
                 conn.setRequestProperty("Range", "bytes" +
                         startPosition + "-" + endPosition);
+                int code = conn.getResponseCode();
+                if (code == 206) {
+                    InputStream is = conn.getInputStream();
+                    RandomAccessFile raf = new RandomAccessFile(getDownloadFileName(path), "rw");
+
+                    raf.seek(startPosition);
+
+                    int len = 0;
+                    byte[] buffer = new byte[1024];
+                    while ((len = is.read(buffer)) != -1) {
+                        // do something
+
+                    }
+
+                } else {
+                    System.out.println("");
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
