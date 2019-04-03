@@ -25,14 +25,14 @@ public class MutiDownloader {
             int code = conn.getResponseCode();
             if (code == 200) {
                 int length = conn.getContentLength();
-                System.out.println("file legth" + length);
+                System.out.println("file legth：" + length);
                 RandomAccessFile raf = new RandomAccessFile(getDownloadFileName(path), "rw");
                 // 创建一个空的文件并设置它的长度等于服务器上的文件的长度
                 raf.setLength(length);
                 raf.close();
 
                  int blockSize = length / TOAL_THREAD_COUNT;
-                 System.out.println("every block size" + blockSize);
+                 System.out.println("every block size：" + blockSize);
                     for (int threaId = 0; threaId < TOAL_THREAD_COUNT; threaId++) {
                         int startPosition = threaId * blockSize;
                         int endPosition = (threaId + 1) * blockSize -1;
@@ -82,7 +82,7 @@ public class MutiDownloader {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
                 System.out.println("begin and end:" + threaId +
-                        "range od download:" + startPosition +
+                        "range of download:" + startPosition +
                         "~~~" + endPosition);
                 conn.setRequestProperty("Range", "bytes" +
                         startPosition + "-" + endPosition);
