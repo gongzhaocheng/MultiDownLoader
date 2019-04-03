@@ -29,7 +29,14 @@ public class MutiDownloader {
 
                  int blockSize = length / TOAL_THREAD_COUNT;
                  System.out.println("every block size" + blockSize);
-
+                    for (int threaId = 0; threaId < TOAL_THREAD_COUNT; threaId++) {
+                        int startPosition = threaId * blockSize;
+                        int endPosition = (threaId + 1) * blockSize -1;
+                        if (threaId == (TOAL_THREAD_COUNT - 1)){
+                            endPosition = length - 1;
+                        }
+                        new DownloadThread(threaId,startPosition,endPosition).start();
+                    }
 
 
             } else {
@@ -49,5 +56,13 @@ public class MutiDownloader {
      */
     private static String getDownloadFileName(String path) {
         return path.substring(path.lastIndexOf("/") + 1);
+    }
+
+    private static class DownloadThread extends Thread{
+        @Override
+        public void run() {
+
+
+        }
     }
 }
