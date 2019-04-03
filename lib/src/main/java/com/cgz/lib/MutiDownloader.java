@@ -11,6 +11,7 @@ import java.nio.file.Path;
 
 public class MutiDownloader {
     public static String path = "http://192.168.102.115:8080/Day10/WebStorm.dmg";
+    public static final int TOAL_THREAD_COUNT = 3;
 
     public static void main(String[] args) {
         try {
@@ -25,6 +26,11 @@ public class MutiDownloader {
                 // 创建一个空的文件并设置它的长度等于服务器上的文件的长度
                 raf.setLength(length);
                 raf.close();
+
+                 int blockSize = length / TOAL_THREAD_COUNT;
+                 System.out.println("every block size" + blockSize);
+
+
 
             } else {
                 System.out.println("download error , code = "+ code);
