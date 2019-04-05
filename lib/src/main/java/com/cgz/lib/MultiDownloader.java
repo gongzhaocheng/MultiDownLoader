@@ -149,7 +149,7 @@ public class MultiDownloader {
                         System.out.println("multi thread download complete...");
                         for (int i = 0; i < TOTAL_THREAD_COUNT; i++) {
                             File finfo = new File(TOTAL_THREAD_COUNT + getDownloadFileName(path) + i + ".txt");
-//                            System.out.println(finfo.delete());
+                            System.out.println(finfo.delete()); //下载完成后删除中间记录文件
                         }
                     }
                 }
