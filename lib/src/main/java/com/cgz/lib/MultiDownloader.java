@@ -1,6 +1,5 @@
 package com.cgz.lib;
 
-import com.sun.jndi.toolkit.url.UrlUtil;
 
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -8,14 +7,14 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.Buffer;
+import java.io.BufferedReader;
 import java.nio.file.Path;
 
-import sun.security.util.Length;
 
-public class MutiDownloader {
-    public static String path = "http://192.168.102.115:8080/Day10/WebStorm.dmg";
-    public static final int TOAL_THREAD_COUNT = 3;
+public class MultiDownloader {
+
+    public static final int TOTAL_THREAD_COUNT = 3;
+    public static String path = "http://192.168.102.115:8080/Day10/flash.dmg";
 
     public static void main(String[] args) {
         try {
@@ -25,22 +24,22 @@ public class MutiDownloader {
             int code = conn.getResponseCode();
             if (code == 200) {
                 int length = conn.getContentLength();
-                System.out.println("file legth：" + length);
+                System.out.println("file length：" + length);
                 RandomAccessFile raf = new RandomAccessFile(getDownloadFileName(path), "rw");
                 // 创建一个空的文件并设置它的长度等于服务器上的文件的长度
                 raf.setLength(length);
                 raf.close();
 
-                 int blockSize = length / TOAL_THREAD_COUNT;
+                int blockSize = length / TOTAL_THREAD_COUNT;
                  System.out.println("every block size：" + blockSize);
-                    for (int threaId = 0; threaId < TOAL_THREAD_COUNT; threaId++) {
-                        int startPosition = threaId * blockSize;
-                        int endPosition = (threaId + 1) * blockSize -1;
-                        if (threaId == (TOAL_THREAD_COUNT - 1)){
-                            endPosition = length - 1;
-                        }
-                        new DownloadThread(threaId,startPosition,endPosition).start();
+                for (int threadId = 0; threadId < TOTAL_THREAD_COUNT; threadId++) {
+                    int startPosition = threadId * blockSize;
+                    int endPosition = (threadId + 1) * blockSize - 1;
+                    if (threadId == (TOTAL_THREAD_COUNT - 1)) {
+                        endPosition = length - 1;
                     }
+                    new DownloadThread(threadId, startPosition, endPosition).start();
+                }
 
 
             } else {
@@ -63,13 +62,21 @@ public class MutiDownloader {
     }
 
     private static class DownloadThread extends Thread{
+        /**
+         * 当前线程的ID
+         */
+        private int threadId;
+        /**
+         * 当前线程下载的起始位置
+         */
+        private int startPosition;
+        /**
+         * 当前线程下载的终止位置
+         */
+        private int endPosition;
 
-        private final int threaId;
-        private final int startPosition;
-        private final int endPosition;
-
-        public DownloadThread(int threaId, int startPosition, int endPosition) {
-            this.threaId = threaId;
+        public DownloadThread(int threadId, int startPosition, int endPosition) {
+            this.threadId = threadId;
             this.startPosition = startPosition;
             this.endPosition = endPosition;
 
@@ -81,11 +88,9 @@ public class MutiDownloader {
                 URL url = new URL(path);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
-                System.out.println("begin and end:" + threaId +
-                        "range of download:" + startPosition +
+                System.out.println("begin and end:" + threadId + "range of download:" + startPosition +
                         "~~~" + endPosition);
-                conn.setRequestProperty("Range", "bytes" +
-                        startPosition + "-" + endPosition);
+                conn.setRequestProperty("Range", "bytes=" + startPosition + "-" + endPosition);
                 int code = conn.getResponseCode();
                 if (code == 206) {
                     InputStream is = conn.getInputStream();
@@ -95,16 +100,14 @@ public class MutiDownloader {
 
                     int len = 0;
                     byte[] buffer = new byte[1024];
-                    int total = 0; // downloaded data of current thread in this times
+                    int total = 0; // downloaded data of current thread in this time
                     while ((len = is.read(buffer)) != -1) {
                         raf.write(buffer, 0, len);
                         total += len;
-
                     }
                     is.close();
                     raf.close();
-                    System.out.println("thread:" + threaId +
-                            "download complete.....");
+                    System.out.println("thread:" + threadId + "download complete.....");
                 } else {
                     System.out.println("request download failed");
                 }
