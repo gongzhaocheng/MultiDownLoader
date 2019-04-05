@@ -15,9 +15,18 @@ import java.nio.file.Path;
 
 
 public class MultiDownloader {
-
+    /**
+     * 总的线程数
+     */
     public static final int TOTAL_THREAD_COUNT = 3;
+    /**
+     * 文件的下载地址
+     */
     public static String path = "http://192.168.102.115:8080/Day10/flash.dmg";
+    /**
+     * 运行状态线程数
+     */
+    public static int runningThreadCount = 0;
 
     public static void main(String[] args) {
         try {
@@ -33,6 +42,7 @@ public class MultiDownloader {
                 raf.setLength(length);
                 raf.close();
 
+                runningThreadCount = TOTAL_THREAD_COUNT;
                 int blockSize = length / TOTAL_THREAD_COUNT;
                  System.out.println("every block size：" + blockSize);
                 for (int threadId = 0; threadId < TOTAL_THREAD_COUNT; threadId++) {
@@ -94,8 +104,8 @@ public class MultiDownloader {
                 if (finfo.exists() && finfo.length() >0){
                     FileInputStream fis = new FileInputStream(finfo);
                     BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-                    String lastposition = br.readLine();
-                    startPosition = Integer.parseInt(lastposition);
+                    String lastPosition = br.readLine();
+                    startPosition = Integer.parseInt(lastPosition);
                     fis.close();
                 }
 
@@ -132,6 +142,17 @@ public class MultiDownloader {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                synchronized (MultiDownloader.class) {
+                    runningThreadCount--;
+                    if (runningThreadCount <= 0){
+                        System.out.println("multi thread download complete...");
+                        for (int i = 0; i < TOTAL_THREAD_COUNT; i++) {
+                            File finfo = new File(TOTAL_THREAD_COUNT + getDownloadFileName(path) + i + ".txt");
+//                            System.out.println(finfo.delete());
+                        }
+                    }
+                }
             }
         }
     }
