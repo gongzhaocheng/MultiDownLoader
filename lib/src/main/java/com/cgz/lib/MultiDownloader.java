@@ -1,7 +1,10 @@
 package com.cgz.lib;
 
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -84,7 +87,18 @@ public class MultiDownloader {
 
         @Override
         public void run() {
+            System.out.println("thread:"+ threadId+"begin working");
+
             try {
+                File finfo = new File(TOTAL_THREAD_COUNT + getDownloadFileName(path) + threadId + ".txt");
+                if (finfo.exists() && finfo.length() >0){
+                    FileInputStream fis = new FileInputStream(finfo);
+                    BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+                    String lastposition = br.readLine();
+                    startPosition = Integer.parseInt(lastposition);
+                    fis.close();
+                }
+
                 URL url = new URL(path);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("GET");
