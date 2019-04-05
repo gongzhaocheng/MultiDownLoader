@@ -103,7 +103,12 @@ public class MultiDownloader {
                     int total = 0; // downloaded data of current thread in this time
                     while ((len = is.read(buffer)) != -1) {
                         raf.write(buffer, 0, len);
+
                         total += len;
+                        RandomAccessFile inforaf = new RandomAccessFile(TOTAL_THREAD_COUNT + getDownloadFileName(path) + threadId + ".txt", "rwd");
+                        inforaf.write(String.valueOf(startPosition+total).getBytes());
+                        inforaf.close();
+
                     }
                     is.close();
                     raf.close();
