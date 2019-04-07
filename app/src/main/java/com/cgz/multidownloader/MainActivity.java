@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     public EditText mEtPath;
     public EditText mEtThreadCount;
@@ -26,8 +26,29 @@ public class MainActivity extends AppCompatActivity {
         mEtThreadCount = findViewById(R.id.et_threadcount);
         mLLContainer = findViewById(R.id.ll_container);
         mBtSelf =  findViewById(R.id.bt_self);
-        mBtOther = (Button) findViewById(R.id.bt_other);
+        mBtOther =  findViewById(R.id.bt_other);
 
+        mBtOther.setOnClickListener(this);
+        mBtSelf.setOnClickListener(this);
+
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.bt_self:
+                downloadBySelf();
+                break;
+            case R.id.bt_other:
+
+                break;
+
+
+        }
+    }
+
+    private void downloadBySelf() {
 
     }
 }
