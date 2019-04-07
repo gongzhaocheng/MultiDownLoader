@@ -1,0 +1,1 @@
+[]!(/resources/device-2019-04-07-154450.png)
